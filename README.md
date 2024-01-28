@@ -1,2 +1,2 @@
 # Porject1
-Spam Detection
+Spam Detection project
