@@ -180,3 +180,20 @@ final_data = pd.concat([data.reset_index(drop=True), features_df], axis=1)
 # A3M Add: Printing final dataset with feature scores
 print("Features obtained with TF IDF")
 print(final_data)
+
+#############################################################################################################
+# A3M Add: Other testing and insights of a more refined feature engineering
+
+# Calculating the average TF IDF score for each feature (word)
+# Idea would be to find words with the highest TF IDF score as these should be the most significant in diff spam vs ham
+# Next we could filter this out and train base solely on this top n features to further avoid overfitting
+# We could also convert label feature to binary ham=1 and spam=0 to help on the training
+# For now we could train as is and see how good it performs
+
+mean_tfidf = final_data.drop(columns=['email', 'label', 'clean_email']).mean().sort_values(ascending=False)
+# A3M Add: Selecting top n features
+top_n_features = 20  # We can change this
+top_features = mean_tfidf.head(top_n_features)
+
+print("Top features obtained with TF IDF")
+print(top_features)
