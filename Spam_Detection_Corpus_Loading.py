@@ -161,3 +161,22 @@ data = pd.DataFrame({
 
 # A3M Add: Preprocessing and cleaning (removing non alphabet chars) the email content
 data['clean_email'] = data['email'].apply(lambda x: sub('[^A-Za-z]+', ' ', x).lower().strip())
+
+# Feature Extraction ###################################################################################
+
+# A3M Update: Feature extraction using TF IDF and stopwords handling
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+stop_words = stopwords.words('english')
+vectorizer = TfidfVectorizer(stop_words=stop_words, max_features=100)  # Could be more than 100
+features = vectorizer.fit_transform(data['clean_email'])
+
+# A3M Add: Converting the features to a DataFrame
+features_df = pd.DataFrame(features.toarray(), columns=vectorizer.get_feature_names_out())
+
+# A3M Add: Combining features with the original data (email content and label)
+final_data = pd.concat([data.reset_index(drop=True), features_df], axis=1)
+
+# A3M Add: Printing final dataset with feature scores
+print("Features obtained with TF IDF")
+print(final_data)
