@@ -3,8 +3,11 @@ import pandas as pd
 import numpy as np
 from os import path
 from re import sub
-from email import message_from_file
+from email import message_from_file, policy
+from email.parser import BytesParser
 from glob import glob
+import nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 # spamassassin email corpus -
