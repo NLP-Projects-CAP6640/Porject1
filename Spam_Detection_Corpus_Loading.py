@@ -123,5 +123,41 @@ for item in spams:
 Spam_Dictionary = {"From": Spam_From, "To": Spam_To, "Subject": Spam_Subject, "Body": Spam_Body}
 Spam_DataFrame = pd.DataFrame(Spam_Dictionary)
 
+# Preprocessing and Feature Engineering ########################################################
 
+# A3M Update: Function to load and parse emails
+# BytesParser is pythons email parser where policy=default suits all typical email parsing tasks.
+def load_emails(directory):
+    emails = []
+    for filename in glob(f'{directory}/*'):
+        with open(filename, 'rb') as file:
+            msg = BytesParser(policy=policy.default).parse(file)
+        # Email parts parsing
+        subject = msg.get('subject', '')
+        email_from = msg.get('from', '')
+        email_to = msg.get('to', '')
+        # Body:
+        if msg.is_multipart():
+            content = ''.join(part.get_payload(decode=True).decode('utf-8', errors='ignore')
+                              for part in msg.get_payload() if part.get_content_type() == 'text/plain')
+        else:
+            content = msg.get_payload(decode=True).decode('utf-8', errors='ignore')
+        # Combining all parts
+        full_content = f'Subject: {subject} From: {email_from} To: {email_to} {content}'
+        emails.append(full_content)
+    return emails
 
+# A3M Add: Loading and preprocessing data
+ham_emails = load_emails(ham_dir)
+spam_emails = load_emails(spam_dir)
+
+# A3M Add: Combining ham and spam emails into a dataFrame
+labels = ['ham'] * len(ham_emails) + ['spam'] * len(spam_emails)
+all_emails = ham_emails + spam_emails
+data = pd.DataFrame({
+    'email': all_emails,
+    'label': labels
+})
+
+# A3M Add: Preprocessing and cleaning (removing non alphabet chars) the email content
+data['clean_email'] = data['email'].apply(lambda x: sub('[^A-Za-z]+', ' ', x).lower().strip())
