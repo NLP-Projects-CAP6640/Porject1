@@ -165,6 +165,20 @@ data = pd.DataFrame({
 # A3M Add: Preprocessing and cleaning (removing non alphabet chars) the email content
 data['clean_email'] = data['email'].apply(lambda x: sub('[^A-Za-z]+', ' ', x).lower().strip())
 
+# A3M Add: Handling missing values 2Feb2024;2:17pm
+print('Mising Values before:')
+print(data.isnull().sum())
+data['clean_email'].fillna('', inplace=True)
+print('Mising Values after:')
+print(data.isnull().sum())
+
+# A3M Add: Handling duplicates 2Feb2024;2:17pm
+print('Duplicates before:')
+print(data.duplicated().sum())
+data.drop_duplicates(inplace=True)
+print('Duplicates after:')
+print(data.duplicated().sum())
+
 # Feature Extraction ###################################################################################
 
 # A3M Update: Feature extraction using TF IDF and stopwords handling
